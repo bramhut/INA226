@@ -46,6 +46,7 @@ public:
 	void setBusConversionTime(convTime_t time);
 	void setShuntConversionTime(convTime_t time);
 	void setAveraging(avg_t avg);
+	void setExternalBusDivider(float ratio);
 	
 private:
 
@@ -54,6 +55,7 @@ private:
 	uint8_t _ADDR;
 	float _MAX_CURRENT;
 	float _SHUNT_RES;
+	float _BUS_DIVIDER_RATIO;
 
 	enum class register_t : uint8_t{
 		CONFIGURATION	= 0,

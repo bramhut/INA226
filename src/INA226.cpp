@@ -6,6 +6,7 @@ INA226::INA226(uint8_t SDA, uint8_t SCL, float MAX_CURRENT, float SHUNT_RES, uin
 	_SCL = SCL;
 	_SHUNT_RES = SHUNT_RES;
 	_ADDR = ADDR;
+	_BUS_DIVIDER_RATIO = 1;
 	if (_SHUNT_RES < (0.00512 / (1 << 14) ) ){
 		#ifdef INA226_ENABLE_DEBUG
 		Serial.println("[INA226] Shunt resistance too low, incorrect readings will be made");
@@ -42,13 +43,13 @@ bool INA226::begin(){
 // Get the power (W)
 float INA226::getPower(){
 	setRegister(register_t::POWER);
-	return getInt() * 25.0 * currentLSB();
+	return _BUS_DIVIDER_RATIO * getInt() * 25.0 * currentLSB();
 }
 
 // Get the bus voltage (V)
 float INA226::getBusVoltage(){
 	setRegister(register_t::BUS_V);
-	return getInt() * 0.00125F;	// 1.25 mV LSB
+	return _BUS_DIVIDER_RATIO * getInt() * 0.00125F;	// 1.25 mV LSB
 }
 
 // Get the current (A)
@@ -79,6 +80,11 @@ void INA226::setShuntConversionTime(convTime_t time){
 void INA226::setAveraging(avg_t avg){
 	config.averaging = static_cast<uint8_t>(avg);
 	setConfig();
+}
+
+// Set an external bus voltage divider ratio
+void INA226::setExternalBusDivider(float ratio){
+	_BUS_DIVIDER_RATIO = ratio;
 }
 
 // PRIVATE FUNCTIONS
